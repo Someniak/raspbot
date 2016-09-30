@@ -1,32 +1,30 @@
 var net = require('net');
-
-var clients = [];
-
-net.createServer(function (serverSocket) {
-
-    serverSocket.name = serverSocket.remoteAddress + ":" + serverSocket.remotePort;
-    clients.push(serverSocket);
-
-    serverSocket.write("Welcome " + serverSocket.name + "\n");
-    broadcast(serverSocket.name + " joined the chat\n", serverSocket);
+var connectedClients = [];
+var Bot = require('./models/bot');
+var parser =require('./utils/parser');
 
 
-    serverSocket.on('data', function (data) {
-        var parsedData = JSON.parse(data);
+net.createServer(function (clientSocket) {
+    var bot = new Bot(clientSocket.remoteAddress,clientSocket.remotePort);
+    connectedClients.push(bot);
+
+
+    clientSocket.on('data', function (data) {
+        var parsedData = parser.decode(data);
         console.log(parsedData);
-        broadcast(serverSocket.name + "> " + data, serverSocket);
+        broadcast(clientSocket.name + "> " + data, clientSocket);
     });
 
-    serverSocket.on('end', function () {
-        clients.splice(clients.indexOf(serverSocket), 1);
-        broadcast(serverSocket.name + " left the chat.\n");
+    clientSocket.on('end', function () {
+        connectedClients.splice(connectedClients.indexOf(clientSocket), 1);
+        broadcast(clientSocket.name + " left the chat.\n");
     });
 
     function broadcast(message, sender) {
-        clients.forEach(function (client) {
+        connectedClients.forEach(function (client) {
             // Don't want to send it to sender
             if (client === sender) return;
-            client.write(message);
+            clientSocket.write(message);
         });
         // Log it to the server output too
         process.stdout.write(message)

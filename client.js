@@ -1,6 +1,6 @@
 var net = require('net');
 var Packet = require('./models/packet.js');
-
+var parser = require('./utils/parser');
 
 var clientSocket = new net.Socket();
 const ip = '127.0.0.1',
@@ -9,8 +9,7 @@ const ip = '127.0.0.1',
 clientSocket.connect(5000, '127.0.0.1', function() {
     console.log('Connected');
     var packet = new Packet('localhost','receiver','rm -rf /');
-    const data = JSON.stringify(packet);
-    clientSocket.write(data);
+    clientSocket.write(parser.encode(packet));
 });
 
 clientSocket.on('data', function(data) {
