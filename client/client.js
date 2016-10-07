@@ -8,12 +8,12 @@ const ip = '127.0.0.1',
 
 clientSocket.connect(5000, '127.0.0.1', function() {
     console.log('Connected');
-    clientSocket.write(parser.encode(packet));
+    clientSocket.write();
 });
 
 clientSocket.on('data', function(data) {
     console.log('Received: ' + data);
-    clientSocket.destroy(); // kill clientSocket after server's response
+    clientSocket.destroy();
 });
 
 clientSocket.on('close', function() {

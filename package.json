@@ -5,8 +5,8 @@
   "main": "boot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node server/server.js",
-    "client": "node client/client.js"
+    "server": "node ./server/server.js",
+    "client": "node ./server/client.js"
   },
   "repository": {
     "type": "git",
