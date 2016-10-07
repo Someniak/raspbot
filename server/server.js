@@ -30,6 +30,8 @@ net.createServer(function (clientSocket) {
         console.log(`IN ${connection.id} : Data has been received`);
         var parsedPacket = parser.decode(packet);
 
+
+        console.log(packet);
         if(parsedPacket.receiver_id === 'BROADCAST'){
             broadcast(parsedPacket);
         }else{
