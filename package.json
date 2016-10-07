@@ -1,0 +1,21 @@
+{
+  "name": "raspbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "boot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node server/server.js",
+    "client": "node client/client.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Someniak/raspbot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Someniak/raspbot/issues"
+  },
+  "homepage": "https://github.com/Someniak/raspbot#readme"
+}
