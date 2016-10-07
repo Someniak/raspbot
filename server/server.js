@@ -3,9 +3,7 @@ var net = require('net'),
     parser =require('./../utils/parser'),
     processor =require('../utils/processor'),
     config = require('../config.json'),
-    publicIp = require('public-ip');
-
-
+    publicAddress = require('public-address');
 
 var connections = [];
 net.createServer(function (clientSocket) {
@@ -18,8 +16,8 @@ net.createServer(function (clientSocket) {
     clientSocket.on('data', function (packet) {
         console.log(`IN ${connection.ip}:${connection.port} : Data has been received`);
         var parsedData = parser.decode(packet);
-        processor.execute(parsedData, send, broadcast).then(()=> {
-            console.log(`${connection.port} : Data processed succesfully`);
+        processor.execute(parsedData, send, broadcast).then((data)=> {
+            console.log(`${connection.ip}:${connection.port} : ${data}`);
         });
     });
 
@@ -42,11 +40,9 @@ net.createServer(function (clientSocket) {
     };
 }).listen(config.default_server_port);
 
-var ipV4, ipV6;
-publicIp.v4()
-    .then((ip) => ipV4 = ip)
-    .then(() => publicIp.v6())
-    .then((ip) => ipV6 = ip)
-    .then(() => {
-        console.log(`Server is listening on ${ipV4}:${ipV6}`)
-    });
+
+
+console.log('Server is running on ...');
+publicAddress(function(err,data){
+    console.log(data.address);
+});
