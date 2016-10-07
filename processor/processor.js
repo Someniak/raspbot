@@ -5,8 +5,8 @@ module.exports = function(){
         var commands = [];
         var promises = [];
 
-        for(var commandname in packet.data){
-            commands.push(commandname);
+        for(var commandName in packet.data){
+            commands.push(commandName);
         }
 
         require('fs').readdirSync(normalizedPath).forEach((file) => {

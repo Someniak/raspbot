@@ -2,7 +2,7 @@
 module.exports = function(){
     var execute = function(data){
         return new Promise((resolve,reject) => {
-
+            resolve("CMD packet has been received");
         });
     };
 
