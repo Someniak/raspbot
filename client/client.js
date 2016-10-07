@@ -1,6 +1,6 @@
 var net = require('net');
-var Packet = require('./models/packet.js');
-var parser = require('./utils/parser');
+var Packet = require('./../models/packet.js');
+var parser = require('./../utils/parser');
 
 var clientSocket = new net.Socket();
 const ip = '127.0.0.1',

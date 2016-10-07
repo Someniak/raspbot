@@ -1,2 +1,2 @@
-var server = require('./server');
-var client = require('./client');
+var server = require('./server/server');
+var client = require('./client/client');

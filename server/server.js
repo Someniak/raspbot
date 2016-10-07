@@ -1,7 +1,7 @@
 var net = require('net');
 var connectedClients = [];
-var Bot = require('./models/bot');
-var parser =require('./utils/parser');
+var Bot = require('./../models/bot');
+var parser =require('./../utils/parser');
 
 
 net.createServer(function (clientSocket) {
