@@ -1,6 +1,5 @@
 "use strict";
 class Bot{
-
     constructor(ip,port){
         this.ip = ip;
         this.port = port;
@@ -16,4 +15,5 @@ class Bot{
 Bot.fromJson = function(json){
     return new Bot(json.ip,json.port);
 };
+
 module.exports= Bot;

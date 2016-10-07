@@ -8,7 +8,6 @@ const ip = '127.0.0.1',
 
 clientSocket.connect(5000, '127.0.0.1', function() {
     console.log('Connected');
-    var packet = new Packet('localhost','receiver','rm -rf /');
     clientSocket.write(parser.encode(packet));
 });
 

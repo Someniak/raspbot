@@ -1,13 +1,13 @@
 "use strict";
 class Packet {
-    constructor(sender, receivers,command){
+    constructor(sender, receivers,data){
         this.receivers = [];
         this.sender = sender;
-        this.command = command;
+        this.data = data;
     }
 }
 Packet.fromJSON = function(json){
-    return new Packet(json.sender, json.receivers, json.command)
+    return new Packet(json.sender, json.receivers, json.data)
 };
 
 module.exports= Packet;
