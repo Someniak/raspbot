@@ -3,7 +3,11 @@ var net = require('net'),
     parser =require('./../utils/parser'),
     processor =require('../processor/processor'),
     config = require('../config.json'),
-    publicAddress = require('public-address');
+    publicAddress = require('public-address'),
+    Packet = require('../models/packet'),
+    uuid = require('uuid-v4');
+
+const SERVER_ID = uuid();
 
 var connections = [];
 net.createServer(function (clientSocket) {
@@ -12,36 +16,45 @@ net.createServer(function (clientSocket) {
     var connection = new Connection(clientSocket, clientSocket.remoteAddress,clientSocket.remotePort);
     connections.push(connection);
 
+    var sendAcknowledgementPacket = function(){
+        var acknowledgementPacket = new Packet(SERVER_ID,connection.id,{
+            ack : {}
+        });
+        var encodedPacket = parser.encode(acknowledgementPacket);
+        send(encodedPacket);
+    };
+
+
     //On data received from client
     clientSocket.on('data', function (packet) {
-        console.log(`IN ${connection.ip}:${connection.port} : Data has been received`);
+        console.log(`IN ${connection.id} : Data has been received`);
         var parsedPacket = parser.decode(packet);
-        processor.execute(parsedPacket).then((outgoingPacket)=> {
-            if(outgoingPacket.receiver === '0.0.0.0'){
-                broadcast(outgoingPacket);
-            }else{
-                send(outgoingPacket)
-            }
-        });
+
+        if(parsedPacket.receiver === '0.0.0.0'){
+            broadcast(parsedPacket);
+        }else{
+            send(parsedPacket)
+        }
     });
 
     //On connection lost
     clientSocket.on('end', function () {
-        console.log(`IN ${connection.ip}:${connection.port} : Connection has been lost`);
+        console.log(`IN ${connection.id} : Connection has been lost`);
         connections.splice(connections.indexOf(connection), 1);
     });
 
     var send = function(packet){
-        var connection = getConnectionByIpAndPort(packet.ip,packet.port);
+        var connection = getConnectionById(packet.receiver_id);
+
         if(connection){
-            console.log(`OUT ${connection.ip}:${connection.port} : Sending data`);
+            console.log(`OUT ${connection.id} : Sending data`);
             let parsedPacket = parser.encode(packet);
-            connection.socket.write(packet);
+            connection.socket.write(parsedPacket);
         }
 
     };
     var broadcast = function(packet){
-        console.log(`OUT ${connection.ip}:${connection.port} : Sending broadcast`);
+        console.log(`OUT ${connection.id} : Sending broadcast`);
         connections.forEach((clientSocket) => {
             if (client === connection) return;
             let parsedPacket = parser.encode(packet);
@@ -49,13 +62,14 @@ net.createServer(function (clientSocket) {
         })
     };
 
-    var getConnectionByIpAndPort = function(ip, port){
-        return connections.filter((connection)=> {
-            return connection.ip === ip && connection.port === port;
-        })
-    }
+    var getConnectionById = function(id){
+        let connection = connections.filter((connection)=> {
+            return connection.id == id;
+        });
+        return connection.length > 0 ? connection[0] : null;
+    };
+    sendAcknowledgementPacket();
 }).listen(config.default_server_port);
-
 
 
 console.log('Server is running on ...');
