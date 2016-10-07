@@ -1,7 +1,7 @@
 var net = require('net'),
     Connection = require('./../models/connection'),
     parser =require('./../utils/parser'),
-    processor =require('../utils/processor'),
+    processor =require('../processor/processor'),
     config = require('../config.json'),
     publicAddress = require('public-address');
 
@@ -15,9 +15,13 @@ net.createServer(function (clientSocket) {
     //On data received from client
     clientSocket.on('data', function (packet) {
         console.log(`IN ${connection.ip}:${connection.port} : Data has been received`);
-        var parsedData = parser.decode(packet);
-        processor.execute(parsedData, send, broadcast).then((data)=> {
-            console.log(`${connection.ip}:${connection.port} : ${data}`);
+        var parsedPacket = parser.decode(packet);
+        processor.execute(parsedPacket).then((outgoingPacket)=> {
+            if(outgoingPacket.receiver === '0.0.0.0'){
+                broadcast(outgoingPacket);
+            }else{
+                send(outgoingPacket)
+            }
         });
     });
 
@@ -27,17 +31,29 @@ net.createServer(function (clientSocket) {
         connections.splice(connections.indexOf(connection), 1);
     });
 
-    var send = function(data){
-        console.log(`OUT ${connection.ip}:${connection.port} : Sending data`);
-        clientSocket.send(data);
+    var send = function(packet){
+        var connection = getConnectionByIpAndPort(packet.ip,packet.port);
+        if(connection){
+            console.log(`OUT ${connection.ip}:${connection.port} : Sending data`);
+            let parsedPacket = parser.encode(packet);
+            connection.socket.write(packet);
+        }
+
     };
-    var broadcast = function(data){
+    var broadcast = function(packet){
         console.log(`OUT ${connection.ip}:${connection.port} : Sending broadcast`);
         connections.forEach((clientSocket) => {
             if (client === connection) return;
-            clientSocket.write(data);
+            let parsedPacket = parser.encode(packet);
+            clientSocket.write(parsedPacket);
         })
     };
+
+    var getConnectionByIpAndPort = function(ip, port){
+        return connections.filter((connection)=> {
+            return connection.ip === ip && connection.port === port;
+        })
+    }
 }).listen(config.default_server_port);
 
 
