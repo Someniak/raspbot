@@ -7,7 +7,7 @@ class Packet {
     }
 }
 Packet.fromJSON = function(json){
-    return new Packet(json.id,json.receiver_id, json.data)
+    return new Packet(json.sender_id,json.receiver_id, json.data)
 };
 
 module.exports= Packet;

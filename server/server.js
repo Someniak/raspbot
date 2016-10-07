@@ -15,13 +15,13 @@ net.createServer(function (clientSocket) {
 
     var connection = new Connection(clientSocket, clientSocket.remoteAddress,clientSocket.remotePort);
     connections.push(connection);
+    console.log(`IN ${connection.id} : Connection has been received`);
 
     var sendAcknowledgementPacket = function(){
         var acknowledgementPacket = new Packet(SERVER_ID,connection.id,{
             ack : {}
         });
-        var encodedPacket = parser.encode(acknowledgementPacket);
-        send(encodedPacket);
+        send(acknowledgementPacket);
     };
 
 
@@ -30,7 +30,7 @@ net.createServer(function (clientSocket) {
         console.log(`IN ${connection.id} : Data has been received`);
         var parsedPacket = parser.decode(packet);
 
-        if(parsedPacket.receiver === '0.0.0.0'){
+        if(parsedPacket.receiver_id === 'BROADCAST'){
             broadcast(parsedPacket);
         }else{
             send(parsedPacket)
@@ -45,7 +45,6 @@ net.createServer(function (clientSocket) {
 
     var send = function(packet){
         var connection = getConnectionById(packet.receiver_id);
-
         if(connection){
             console.log(`OUT ${connection.id} : Sending data`);
             let parsedPacket = parser.encode(packet);
@@ -64,7 +63,7 @@ net.createServer(function (clientSocket) {
 
     var getConnectionById = function(id){
         let connection = connections.filter((connection)=> {
-            return connection.id == id;
+            return connection.id === id;
         });
         return connection.length > 0 ? connection[0] : null;
     };
