@@ -2,11 +2,9 @@
   "name": "raspbot",
   "version": "1.0.0",
   "description": "",
-  "main": "boot.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node ./server/server.js",
-    "client": "node ./server/client.js"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +17,15 @@
   },
   "homepage": "https://github.com/Someniak/raspbot#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "colors": "^1.1.2",
+    "cookie-parser": "^1.4.3",
+    "crypto-js": "^3.1.8",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "express-validator": "^3.0.0",
+    "morgan": "^1.7.0",
     "promise": "^7.1.1",
     "public-address": "^0.1.1",
     "uuid-v4": "^0.1.0"
