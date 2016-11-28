@@ -7,42 +7,51 @@ var Packet = require('../models/packet');
 var parser =require('./parser');
 var crypto = require('./crypto');
 
+var processor = require('./processor/processor');
+
 module.exports=  function(config){
     var connections = [];
     const SERVER_ID = uuid();
 
     //SERVER SETUP
-    var server = net.createServer(function (client) {
-        client.setEncoding(config.default_encoding);
-        var connection = new Connection(client, client.remoteAddress,client.remotePort);
+    var server = net.createServer(function (socket) {
+        socket.setEncoding(config.default_encoding);
+
+        var connection = new Connection(socket, socket.remoteAddress,socket.remotePort);
         connections.push(connection);
         console.log(`-> ${connection.id} : Connection has been received`);
-        var sendAcknowledgementPacket = (function(){
-            var acknowledgementPacket = new Packet(SERVER_ID,connection.id,{
-                ack : {}
-            });
-            send(acknowledgementPacket);
-        })();
-        client.on('data', function (data) {
-            console.log(`-> ${connection.id} : Packet has been received`);
-            var packet = crypto.decrypt(data);
-            if(!parser.isValid(packet)){
-                console.log(`-> ${connection.id} : Received packet is invalid`);
-                return;
-            }
-            var parsedPacket = parser.decode(packet);
 
-            if(parsedPacket.receiver_id === 'BROADCAST'){
-                broadcast(parsedPacket);
-            }else{
-                send(parsedPacket)
-            }
-        });
-        client.on('end', function () {
-            console.log(`-> ${connection.id} : Connection has been lost`);
-            connections.splice(connections.indexOf(connection), 1);
-        });
+        //AUTOMATICALLY SEND ACK PACKET
+        send(new Packet(SERVER_ID,connection.id,{ack : {}}));
+
+        socket.on('data', onData.bind({}, connection));
+        socket.on('end', onEnd.bind({}, connection));
     }).listen(config.port);
+
+
+
+    //FUNCTIONS CALLED ON EVENT
+    var onData= function(connection,data){
+        console.log(`-> ${connection.id} : Packet has been received`);
+        var packet = crypto.decrypt(data);
+        if(!parser.isValid(packet)){
+            console.log(`-> ${connection.id} : Received packet is invalid`);
+            return;
+        }
+        var parsedPacket = parser.decode(packet);
+
+        if(parsedPacket.receiver_id === 'BROADCAST'){
+            broadcast(parsedPacket);
+        }else if(parsedPacket.receiver_id == SERVER_ID){
+            process(parsedPacket);
+        }else{
+            send(parsedPacket);
+        }
+    };
+    var onEnd = function(connection,data){
+        console.log(`-> ${connection.id} : Connection has been lost`);
+        connections.splice(connections.indexOf(connection), 1);
+    };
 
 
     //EXPORTABLE FUNCTIONS
@@ -54,6 +63,11 @@ module.exports=  function(config){
             let data = crypto.encrypt(parsedPacket);
             connection.socket.write(data);
         }
+    };
+    var process  = function(packet){
+        //DO LOW LEVEL SHIT HERE
+
+        //DO HIGH LEVEL SHIT AT PROCESSOR
     };
     var broadcast = function(packet){
         console.log(`<- ${connection.id} : Sending broadcast`);
