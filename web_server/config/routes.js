@@ -27,6 +27,6 @@ module.exports = function (app,socketServer) {
     });
 
     app.get('*', function(req,res,next){
-        res.status(404).render('404');
+        res.status(404).render('status/404');
     });
 };

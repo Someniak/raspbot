@@ -8,7 +8,7 @@ module.exports = (function () {
         if (req.session && req.session.authenticated) {
             next();
         } else {
-            res.status(403).render('403');
+            res.status(403).render('status/403');
         }
     };
 
