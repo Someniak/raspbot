@@ -3,6 +3,6 @@
   "default_web_admin_port": 8040,
   "default_encoding":"utf8",
   "token":"test",
-  "encryption_key":"test",
+  "encryption_key":"T&V^8a9D*HV!njTbcEr*",
   "logmode":"dev"
 }
