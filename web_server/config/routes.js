@@ -18,12 +18,26 @@ module.exports = function (app,socketServer) {
         });
     });
     app.get('/control/:id', auth.requireToken,function(req,res,next){
-
-        let connection = socketServer.getConnectionById(req.params.id);
-        console.log(connection);
+        connection = socketServer.getConnectionById(req.params.id);
         res.render('control',{
-            connection
+            connection : connection
         });
+
+    });
+    app.post('/control/:id/cmd/',auth.requireToken, function(req,res,next){
+        let cmd =req.body.cmd;
+        let id =req.params.id;
+        socketServer.sendCmd(id,cmd);
+
+        res.redirect('/control/'+id);
+    });
+
+    app.post('/control/:id/sig/',auth.requireToken, function(req,res,next){
+        let sig =req.body.sig;
+        let id =req.params.id;
+        socketServer.sendSig(id,sig);
+
+        res.redirect('/control/'+id);
     });
 
     app.get('*', function(req,res,next){

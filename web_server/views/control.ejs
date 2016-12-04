@@ -1,4 +1,4 @@
-<% include partials/header.ejs %>
+<% include partials/header_private.ejs %>
 <body>
 <div class="container">
     <h1>Control</h1>
@@ -16,7 +16,30 @@
 
             </div>
         </div>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Actions</h3>
+            </div>
+            <div class="panel-body">
+                <form action="/control/<%= connection.id%>/cmd/" method="post">
+                    <input type="submit" value="SENDCMD" name="submit"/>
+                    <input type="text" name="cmd"/>
+                </form>
+                <form action="/control/<%= connection.id%>/sig" method="post">
+                    <input type="submit" value="SENDSIGKILL" name="submit"/>
+                    <input type="text" name="sig" value="SIGINT"/>
+                </form>
+            </div>
+        </div>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Control</h3>
+            </div>
+            <div class="panel-body">
+                <div id="terminal"></div>
+            </div>
+        </div>
     </div>
 </div>
-</body>
-<% include partials/footer.ejs %>
+</body>r
+<% include partials/footer_private.ejs %>

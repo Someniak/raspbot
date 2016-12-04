@@ -1,6 +1,9 @@
-<% include partials/header.ejs %>
+<% include partials/header_private.ejs %>
 <div class="container">
     <h1>Overview</h1>
+    <h2>Log</h2>
+
+
     <h2>Current connections (<%= connections.length%>)</h2>
     <table class="table table-striped table-hover table-responsive table-condensed" id="connections">
         <thead>
@@ -19,10 +22,10 @@
             <td><%= connection.name %></td>
             <td><%= connection.ip %></td>
             <td><%= connection.port %></td>
-            <td><a href="/control/<%= connection.id %>" class="btn btn-success">CONTROL</a></td>
+            <td><a href="/control/<%= connection.id %>">CONTROL</a></td>
         </tr>
         <%}%>
         </tbody>
     </table>
 </div>
-<% include partials/footer.ejs %>
+<% include partials/footer_private.ejs %>

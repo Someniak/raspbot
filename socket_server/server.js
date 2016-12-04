@@ -7,13 +7,10 @@ var Packet = require('../models/packet');
 var parser =require('./parser');
 var crypto = require('./crypto');
 
-var processor = require('./processor/processor');
-
 module.exports=  function(config){
     var connections = [];
     const SERVER_ID = uuid();
 
-    //SERVER SETUP
     var server = net.createServer(function (socket) {
         socket.setEncoding(config.default_encoding);
 
@@ -26,13 +23,12 @@ module.exports=  function(config){
 
         socket.on('data', onData.bind({}, connection));
         socket.on('end', onEnd.bind({}, connection));
+        socket.on('err', onError.bind({}, connection));
     }).listen(config.port);
 
-
-
-    //FUNCTIONS CALLED ON EVENT
     var onData= function(connection,data){
         console.log(`-> ${connection.id} : Packet has been received`);
+
         var packet = crypto.decrypt(data);
         if(!parser.isValid(packet)){
             console.log(`-> ${connection.id} : Received packet is invalid`);
@@ -43,7 +39,7 @@ module.exports=  function(config){
         if(parsedPacket.receiver_id === 'BROADCAST'){
             broadcast(parsedPacket);
         }else if(parsedPacket.receiver_id == SERVER_ID){
-            process(parsedPacket);
+            processCmd(parsedPacket,connection);
         }else{
             send(parsedPacket);
         }
@@ -53,8 +49,11 @@ module.exports=  function(config){
         connections.splice(connections.indexOf(connection), 1);
     };
 
+    var onError = function(connection,data){
+        console.log(`-> ${connection.id} : Connection has been lost`);
+        connections.splice(connections.indexOf(connection), 1);
+    };
 
-    //EXPORTABLE FUNCTIONS
     var send = function(packet){
         var connection = getConnectionById(packet.receiver_id);
         if(connection){
@@ -63,11 +62,6 @@ module.exports=  function(config){
             let data = crypto.encrypt(parsedPacket);
             connection.socket.write(data);
         }
-    };
-    var process  = function(packet){
-        //DO LOW LEVEL SHIT HERE
-
-        //DO HIGH LEVEL SHIT AT PROCESSOR
     };
     var broadcast = function(packet){
         console.log(`<- ${connection.id} : Sending broadcast`);
@@ -88,11 +82,33 @@ module.exports=  function(config){
         return connections;
     };
 
+    var processCmd = function(packet,connection){
+        if(packet.data.hasOwnProperty('name')){
+            connection.name = packet.data['name'];
+        }
+        console.log(packet);
+        console.log(packet.data);
+    };
+
+    var sendCmd = function(receiverId,cmd){
+        send(new Packet(SERVER_ID,receiverId,{cmd: cmd}))
+    };
+    var sendSig = function(receiverId, sig){
+        console.log(sig);
+        send(new Packet(SERVER_ID,receiverId,{sig: sig}))
+    };
+    var broadcastCmd = function(receiverId, cmd){
+        broadcast(new Packet(SERVER_ID,null, {cmd: cmd}))
+    };
+    var broadcastSig = function(receiverId, sig){
+        broadcast(new Packet(SERVER_ID,null, {sig: sig}))
+    };
+
     return {
-        send: send,
-        broadcast: broadcast,
         getConnectionById: getConnectionById,
-        getAllConnections: getAllConnections
+        getAllConnections: getAllConnections,
+        sendCmd: sendCmd,
+        sendSig: sendSig
     }
 };
 
