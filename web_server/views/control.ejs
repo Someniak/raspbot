@@ -1,8 +1,9 @@
 <% include partials/header_private.ejs %>
 <body>
 <div class="container">
-    <h1>Control</h1>
-    <a href="/overview">Back to current connections</a>
+    <h1>CONTROL</h1>
+    <% include partials/logout.ejs %>
+    <a href="/overview" class="btn btn-warning pull-right">BACK</a>
     <div class="row">
         <div class="panel panel-success">
             <div class="panel-heading">
@@ -21,14 +22,8 @@
                 <h3 class="panel-title">Actions</h3>
             </div>
             <div class="panel-body">
-                <form action="/control/<%= connection.id%>/cmd/" method="post">
-                    <input type="submit" value="SENDCMD" name="submit"/>
-                    <input type="text" name="cmd"/>
-                </form>
-                <form action="/control/<%= connection.id%>/sig" method="post">
-                    <input type="submit" value="SENDSIGKILL" name="submit"/>
-                    <input type="text" name="sig" value="SIGINT"/>
-                </form>
+                <a href="#" class="btn btn-default">GET Network Info</a>
+                <a href="#" class="btn btn-default">GET Users</a>
             </div>
         </div>
         <div class="panel panel-success">

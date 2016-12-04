@@ -21,12 +21,16 @@ module.exports = (function () {
         if(req.session && req.session.authenticated) {
             req.session.authenticated = false;
         }
+        res.redirect('/')
     };
-
+    var isAuthenticated = function(req,res){
+        return req.session && req.session.authenticated;
+    };
 
     return {
         requireToken: requireToken,
         login: login,
-        logout: logout
+        logout: logout,
+        isAuthenticated: isAuthenticated
     }
 })();

@@ -22,15 +22,12 @@ module.exports = function (app) {
 
     app.use((req, res, next) => {
         res.header('Access-Control-Allow-Methods', 'GET,POST');
+        res.header('Access-Control-Allow-Origin', 'http://localhost:8040');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Request-With, Content-Type, Accept');
         res.header('X-Frame-Options', 'deny');
         res.header('X-XSS-Protection', '1; mode=block');
         res.header('X-Powered-By', 'Raspbot');
         next();
     });
-    app.use((req,res,next)=> {
-        req.session.authenticated = true;
-        next();
-    })
 };
 
