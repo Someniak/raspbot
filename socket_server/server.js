@@ -110,6 +110,10 @@ module.exports=  function(config,websocket){
         websocket.send('update-connection',connection);
     };
 
+    websocket.registerListener('broadcast-command', function (data) {
+        console.log(data);
+    });
+
     return {
         getConnectionById: getConnectionById,
         getAllConnections: getAllConnections,

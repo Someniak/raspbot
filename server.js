@@ -19,4 +19,3 @@ publicAddress(function(err,data){
     console.log(`WEBADMIN is running on ${data.address}:${config.default_web_admin_port} and 127.0.0.1:${config.default_web_admin_port}`);
     console.log(`SOCKETSERVER is running on ${data.address}:${config.default_socket_server_port} and 127.0.0.1:${config.default_socket_server_port}`);
 });
-

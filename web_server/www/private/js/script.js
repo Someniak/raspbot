@@ -3,17 +3,13 @@ $(document).ready(() => {
     let $numberOfConnections = $('#number_of_connections');
 
     let term = $('#terminal').terminal(function (command, term) {
-        switch(command){
-            case:
-                break;
-        }
+            term.echo('Hello I\'m raspbot');
     }, {
         greetings: 'RASPBOT COMMAND AND CONQUER!',
         name: 'raspbot',
         height: 400,
-        prompt: 'RASPBOT> '
+        prompt: ''
     });
-
 
     socket.on('new-connection', function (data) {
         console.log(data);
@@ -27,7 +23,7 @@ $(document).ready(() => {
         console.log(data);
         updateConnection(JSON.parse(data));
     });
-    socket.on('info',function(data){
+    socket.on('info', function (data) {
         term.echo(JSON.parse(data));
     });
 
@@ -58,7 +54,5 @@ $(document).ready(() => {
                 <td><a href="/control/${data.id}" class="btn btn-success btn-xs">CONTROL</a></td>
             </tr>`
     };
-
-
 
 });
