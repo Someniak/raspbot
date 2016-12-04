@@ -1,12 +1,11 @@
 var crypto = require('crypto');
 var config = require('../config.json');
+var encryptor = require('simple-encryptor')(config.encryption_key);
+
 
 module.exports.decrypt = function(ciphertext){
     try {
-        let cipher = crypto.createCipher('aes-256-cbc',config.encryption_key);
-        let crypted = cipher.update(ciphertext,'utf8','hex');
-        crypted += cipher.final('hex');
-        return crypted;
+        return encryptor.decrypt(ciphertext);
     }catch(err){
         console.log(err);
     }
@@ -15,10 +14,7 @@ module.exports.decrypt = function(ciphertext){
 
 module.exports.encrypt = function(plaintext){
     try{
-        let decipher = crypto.createDecipher('aes-256-cbc',config.encryption_key);
-        let dec = decipher.update(plaintext,'hex','utf8');
-        dec += decipher.final('utf8');
-        return dec;
+        return encryptor.encrypt(plaintext);
     }catch(err){
         console.log(err);
     }
