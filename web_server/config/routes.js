@@ -29,9 +29,22 @@ module.exports = function (app,socketServer) {
         }else {
             res.redirect('/overview');
         }
-
     });
     app.get('*', function(req,res,next){
         res.status(404).render('status/404');
+    });
+
+    app.post('/control/:id/cmd/',auth.requireToken,function(req,res,next){
+        let id = req.params.id;
+        let cmd = req.body.cmd;
+        console.log(cmd);
+        socketServer.sendCmd(id,cmd);
+        res.status(200).send({'status':'ok'})
+    });
+    app.post('/control/broadcast-cmd/',auth.requireToken,function(req,res,next){
+        console.log(req.body);
+        let cmd = req.body.cmd;
+        socketServer.broadcastCmd(cmd);
+        res.status(200).send({'status':'ok'})
     });
 };

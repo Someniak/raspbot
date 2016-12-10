@@ -2,29 +2,38 @@ $(document).ready(() => {
     let socket = io('http://127.0.0.1:8040');
     let $numberOfConnections = $('#number_of_connections');
 
-    let term = $('#terminal').terminal(function (command, term) {
-            term.echo('Hello I\'m raspbot');
+    let termMain = $('#terminal').terminal(function (cmd, term) {
+            $.ajax({
+            url: '/control/broadcast-cmd/',
+            data: {
+                cmd: cmd
+            },
+            method: 'post'
+        })
     }, {
-        greetings: 'RASPBOT COMMAND AND CONQUER!',
+        greetings: 'RASPBOT COMMAND AND CONQUER THE WORLD!\nUse the force...',
         name: 'raspbot',
         height: 400,
-        prompt: ''
+        prompt: '> '
     });
 
+
     socket.on('new-connection', function (data) {
-        console.log(data);
         addConnection(JSON.parse(data));
     });
     socket.on('delete-connection', function (data) {
-        console.log(data);
         deleteConnection(JSON.parse(data))
     });
     socket.on('update-connection', function (data) {
-        console.log(data);
         updateConnection(JSON.parse(data));
     });
     socket.on('info', function (data) {
-        term.echo(JSON.parse(data));
+        termMain.echo(JSON.parse(data));
+    });
+    socket.on('data', function (data) {
+        let packet =JSON.parse(data);
+        let output = `-> ${packet.receiver_id} : ${packet.data.name}  \n ${atob(packet.data.output)}`
+        termMain.echo(output);
     });
 
     let addConnection = function (data) {
@@ -36,12 +45,10 @@ $(document).ready(() => {
         changeNumberOfConnections(-1);
     };
     let updateConnection = function (data) {
-        console.log(data);
         let element = $('tr[data-connection-id=' + data.id + ']').replaceWith(getConnectionHtml(data));
     };
     let changeNumberOfConnections = function (delta) {
         let currentNumber = parseInt($numberOfConnections.text(), 10);
-        console.log(currentNumber);
         $numberOfConnections.text(currentNumber + delta);
     };
     let getConnectionHtml = function (data) {
@@ -55,4 +62,14 @@ $(document).ready(() => {
             </tr>`
     };
 
+    $('#mass-command').on('submit', function (e) {
+        e.preventDefault();
+        let formdata = $(this).serialize();
+
+        $.ajax({
+            url: "/control/broadcast-cmd/",
+            data: formdata,
+            method: 'post'
+        })
+    });
 });

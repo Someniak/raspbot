@@ -1,8 +1,35 @@
-<% include partials/header_private.ejs %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/png" href="/public/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Raspbot</title>
+
+    <!-- Bootstrap -->
+    <link href="https://bootswatch.com/darkly/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.21/js/jquery.terminal.min.js"></script>
+    <script src="/private/js/control-script.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/0.11.21/css/jquery.terminal.min.css" rel="stylesheet"/>
+    <link href="/private/css/style.css" rel="stylesheet" />
+</head>
 <body>
 <div class="container">
     <h1>CONTROL</h1>
-    <% include partials/logout.ejs %>
+    <form action="/logout" method="post" class="pull-right">
+        <input type="submit" value="LOGOUT" class="btn btn-danger"/>
+    </form>
     <a href="/overview" class="btn btn-warning pull-right">BACK</a>
     <div class="row">
         <div class="panel panel-success">
@@ -19,22 +46,16 @@
         </div>
         <div class="panel panel-success">
             <div class="panel-heading">
-                <h3 class="panel-title">Actions</h3>
-            </div>
-            <div class="panel-body">
-                <a href="#" class="btn btn-default">GET Network Info</a>
-                <a href="#" class="btn btn-default">GET Users</a>
-            </div>
-        </div>
-        <div class="panel panel-success">
-            <div class="panel-heading">
                 <h3 class="panel-title">Control</h3>
             </div>
             <div class="panel-body">
-                <div id="terminal"></div>
+                <div id="terminal-control" data-connection-id="<%= connection.id %>"></div>
             </div>
         </div>
     </div>
 </div>
-</body>r
-<% include partials/footer_private.ejs %>
+</body>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>
