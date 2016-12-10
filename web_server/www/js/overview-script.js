@@ -3,7 +3,9 @@ $(document).ready(() => {
     let $numberOfConnections = $('#number_of_connections');
 
     let termMain = $('#terminal').terminal(function (cmd, term) {
-            $.ajax({
+        if(cmd)
+
+        $.ajax({
             url: '/control/broadcast-cmd/',
             data: {
                 cmd: cmd
