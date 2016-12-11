@@ -1,6 +1,6 @@
 RASPBOT
 =======
-
+![](https://i.imgur.com/jJh6rkX.png)
 A simple CNC Server running on Node.JS. It can orchestrate commands accross multiple hosts.
 The agent for this botnet can be found on: https://github.com/Someniak/raspbot-client
 
