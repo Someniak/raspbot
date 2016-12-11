@@ -1,3 +1,5 @@
+var util = require('util');
+
 module.exports = function (http) {
     if (typeof http === 'undefined') {
         throw new Error('Http is not defined!');

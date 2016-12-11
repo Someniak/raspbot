@@ -29,7 +29,7 @@
     "promise": "^7.1.1",
     "public-address": "^0.1.1",
     "simple-encryptor": "^1.1.0",
-    "socket.io": "^1.7.1",
+    "socket.io": "^1.7.2",
     "uuid-v4": "^0.1.0"
   }
 }

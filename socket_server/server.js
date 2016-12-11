@@ -1,36 +1,33 @@
-var net = require('net');
 var uuid= require('uuid-v4');
 var Connection = require('../models/connection');
 var Packet = require('../models/packet');
 var parser =require('./parser');
+var crypto = require('./crypto');
 
 module.exports=  function(config,websocket){
     var connections = [];
     const SERVER_ID = uuid();
 
-    /*
-    Create socketserver
-     */
-    let server = net.createServer(function (socket) {
-        socket.setEncoding(config.default_encoding);
-        let connection = new Connection(socket, socket.remoteAddress,socket.remotePort);
+    var io = require('socket.io')(config.port);
+    io.on('connection', function(socket){
+        let connection = new Connection(socket, socket.request.connection.remoteAddress,socket.request.connection.remotePort);
         connections.push(connection);
         addNewConnection(connection);
         log(`-> ${connection.id} : Connection has been received`);
 
         send(new Packet(SERVER_ID,connection.id,{ack : ''}));
-        socket.on('data', onData.bind({}, connection));
-        socket.on('end', onEnd.bind({}, connection));
-        socket.on('err', onEnd.bind({}, connection));
-
-    }).listen(config.port);
-
+        socket.on('data', onData.bind({},connection));
+        socket.on('disconnect', onEnd.bind({}, connection));
+    });
 
     /*
     Processes received data on socket
      */
-    let onData= function(connection,data){
+    let onData= function(connection,cipher){
+        let data= crypto.decrypt(cipher);
+
         log(`-> ${connection.id} : Packet has been received`);
+
         if(!parser.isValid(data)){
             log(`-> ${connection.id} : Received packet is invalid`);
             return;
@@ -64,7 +61,8 @@ module.exports=  function(config,websocket){
         if(connection){
             log(`<- ${connection.id} : Sending data`);
             let parsedPacket = parser.encode(packet);
-            connection.socket.write(parsedPacket);
+            let cipher = crypto.encrypt(parsedPacket);
+            connection.socket.emit('data',cipher);
         }
     };
 
@@ -76,7 +74,8 @@ module.exports=  function(config,websocket){
             log(`<- ${connection.id} : Sending broadcast`);
             packet.receiver_id = connection.id;
             let parsedPacket = parser.encode(packet);
-            connection.socket.write(parsedPacket);
+            let cipher = crypto.encrypt(parsedPacket);
+            connection.socket.emit('data',cipher);
         })
     };
 

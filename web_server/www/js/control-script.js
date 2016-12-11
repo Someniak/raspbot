@@ -28,7 +28,7 @@ $(document).ready(() => {
     socket.on('delete-connection', function(data){
         let packet =JSON.parse(data);
         if(packet.id === senderId){
-            termMain.echo('CONNECTION (' +senderId +') has been aborted! \nNo new data can be send...');
+            termMain.echo('CONNECTION (' +senderId +') has abonded ship! \nLet him drown...');
             termMain.pause();
         }
     });
