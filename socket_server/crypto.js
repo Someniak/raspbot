@@ -1,7 +1,4 @@
-var crypto = require('crypto');
 var config = require('../config.json');
-var encryptor = require('simple-encryptor')(config.encryption_key);
-
 
 var crypto = require('crypto'),
     algorithm = 'aes-256-ctr',
