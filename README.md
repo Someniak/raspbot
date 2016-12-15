@@ -2,12 +2,14 @@ RASPBOT
 =======
 ![](https://i.imgur.com/jJh6rkX.png)
 
-A simple CNC Server running on Node.JS. It can orchestrate commands accross multiple hosts.
+A simple CNC Server running on Node.JS. It can orchestrate commands across multiple hosts.
 The agent for this botnet can be found on: https://github.com/Someniak/raspbot-client
 
+We are not responsible for any attacks done with this tool.
 
 ## Installation
 ```
+# Install NodeJS v7
 > git clone https://github.com/Someniak/raspbot.git
 > npm install
 > npm install forever -g
