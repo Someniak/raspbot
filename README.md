@@ -19,6 +19,9 @@ We are not responsible for any attacks done with this tool.
 ```
 > npm start
 ```
+## Configuring it
+Change the configuration in config.json
+
 
 If you find bugs, do not hesitate to leave an issue...
 If you want to fix bugs or add some new code, feel free to do pull requests...
